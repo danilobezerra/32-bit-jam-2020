@@ -9,12 +9,15 @@ namespace AncientTech.Game
 {
     public class BoardManager : MonoBehaviour
     {
+        [SerializeField] private GameObject[] floorPrefabs;
+        [SerializeField] private GameObject[] wallPrefabs;
+        [SerializeField] private GameObject[] coinPrefabs;
+        [SerializeField] private GameObject[] healthPrefabs;
+        
+        [SerializeField] private GameObject goalPrefab;
         [SerializeField] private GameObject playerPrefab;
-        [SerializeField] private GameObject coinPrefab;
-        [SerializeField] private GameObject healthPrefab;
 
         [SerializeField] private Transform[] maps;
-        [SerializeField] private GameObject[] tiles;
 
         [SerializeField] private CinemachineVirtualCamera virtualCamera;
 
@@ -87,39 +90,50 @@ namespace AncientTech.Game
         {
             var lastIndexOfRows = board.GetLength(0) - 1;
             var value = board[i, j];
-            Debug.Log(value);
 
             if ((value & 0x01) != 0) { // Floor
-                InstantiateGameObject(j, lastIndexOfRows - i, 0);
+                var randomIndex = Random.Range(0, floorPrefabs.Length);
+                var prefab = floorPrefabs[randomIndex];
+                
+                InstantiateGameObject(prefab, j, lastIndexOfRows - i, 0);
             }
             
             if ((value & 0x02) != 0) { // Wall
-                InstantiateGameObject(j, lastIndexOfRows - i, 1);
+                var randomIndex = Random.Range(0, wallPrefabs.Length);
+                var prefab = wallPrefabs[randomIndex];
+                
+                InstantiateGameObject(prefab, j, lastIndexOfRows - i, 1);
             }
             
             if ((value & 0x04) != 0) { // Coin
-                InstantiateGameObject(j, lastIndexOfRows - i, 2);
+                var randomIndex = Random.Range(0, coinPrefabs.Length);
+                var prefab = coinPrefabs[randomIndex];
+                
+                InstantiateGameObject(prefab, j, lastIndexOfRows - i, 2);
             }
             
             if ((value & 0x08) != 0) { // Health
-                InstantiateGameObject(j, lastIndexOfRows - i, 3);
+                var randomIndex = Random.Range(0, healthPrefabs.Length);
+                var prefab = healthPrefabs[randomIndex];
+                
+                InstantiateGameObject(prefab, j, lastIndexOfRows - i, 3);
             }
             
             if ((value & 0x10) != 0) { // Goals
-                InstantiateGameObject(j, lastIndexOfRows - i, 4);
+                InstantiateGameObject(goalPrefab, j, lastIndexOfRows - i, 4);
             }
             
             if ((value & 0x20) != 0) { // Player
-                var player = InstantiateGameObject(j, lastIndexOfRows - i, 5);
+                var player = InstantiateGameObject(playerPrefab, j, lastIndexOfRows - i, 5);
                 virtualCamera.Follow = player.transform;
                 virtualCamera.LookAt = player.transform;
             }
         }
 
-        private GameObject InstantiateGameObject(float x, float z, int index)
+        private GameObject InstantiateGameObject(GameObject prefab, float x, float z, int index)
         {
             var position = new Vector3(x, maps[index].position.y, z);
-            var instance = Instantiate(tiles[index], position, Quaternion.identity);
+            var instance = Instantiate(prefab, position, Quaternion.identity);
             instance.transform.parent = maps[index];
 
             return instance;

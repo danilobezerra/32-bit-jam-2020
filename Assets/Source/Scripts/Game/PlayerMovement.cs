@@ -75,6 +75,8 @@ namespace AncientTech.Game
             if (!Physics.Raycast(transform.position, direction, out var hit, 1f)) {
                 return true;
             }
+            
+            Debug.DrawRay(transform.position, direction, Color.magenta, .5f);
 
             if (hit.collider.CompareTag(tagWall)) {
                 // TODO: Play wall bump sound
@@ -94,7 +96,7 @@ namespace AncientTech.Game
             if (hit.collider.CompareTag(tagCoin)) {
                 if (GameManager.Instance.IsGameRunning) {
                     //_audioSource.PlayOneShot(_sounds[3]);
-                    //GameManager.Instance.ImproveScore(100);
+                    GameManager.Instance.AddScore(100); // TODO: object's properties 
                     // TODO: Play coin caught sound
 
                     Destroy(hit.collider.gameObject);
@@ -106,7 +108,7 @@ namespace AncientTech.Game
             if (hit.collider.CompareTag(tagHealth)) {
                 if (GameManager.Instance.IsGameRunning) {
                     //_audioSource.PlayOneShot(_sounds[4]);
-                    //GameManager.Instance.ReplenishLife(0.1f);
+                    GameManager.Instance.ReplenishLife(0.1f); // TODO: object's properties 
                     // TODO: Play cure sound
 
                     Destroy(hit.collider.gameObject);

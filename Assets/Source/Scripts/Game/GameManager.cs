@@ -1,4 +1,4 @@
-﻿using System;
+﻿using AncientTech.UI;
 using UnityEngine;
 
 namespace AncientTech.Game
@@ -7,10 +7,12 @@ namespace AncientTech.Game
     {
         public static GameManager Instance { get; private set; }
 
+        [SerializeField] private GamePlayView gamePlayView;
+
         public bool IsGameRunning { get; private set; }
         public int CurrentLevel
         {
-            get => PlayerPrefs.GetInt("Level", 0);
+            get => PlayerPrefs.GetInt("Level", 1);
             private set => PlayerPrefs.SetInt("Level", value);
         }
 
@@ -20,6 +22,8 @@ namespace AncientTech.Game
 
         private void Awake()
         {
+            Application.targetFrameRate = 24;
+            
             if (Instance == null) {
                 Instance = GetComponent<GameManager>();
             }
@@ -36,18 +40,16 @@ namespace AncientTech.Game
 
             if (Input.GetButtonDown("Cancel")) {
                 if (Time.timeScale > 0f) {
-                    //_headUpDisplay.SetActive(false);
-                    //_pauseDisplay.SetActive(true);
+                    gamePlayView.SetPaused(true);
 
                     Time.timeScale = 0;
                 } else {
                     Time.timeScale = 1f;
 
-                    //_pauseDisplay.SetActive(false);
-                    //_headUpDisplay.SetActive(true);
+                    gamePlayView.SetPaused(false);
                 }
             } else {
-                CountdownTime(Time.deltaTime);
+                //CountdownTime(Time.deltaTime);
             }
         }
 
@@ -57,14 +59,26 @@ namespace AncientTech.Game
             //SceneManager.LoadScene(_endingScene);
         }
 
-        public void ImproveScore(int i)
+        public void AddScore(int amount)
         {
-            //throw new NotImplementedException();
+            if (_currentScore + amount > 9999) {
+                _currentScore = 9999;
+            } else {
+                _currentScore += amount;
+            }
+
+            gamePlayView.SetCurrentScore(_currentScore);
         }
 
-        public void ReplenishLife(float f)
+        public void ReplenishLife(float amount)
         {
-            //throw new NotImplementedException();
+            if (_currentLife + amount > 1) {
+                _currentLife = 1;
+            } else {
+                _currentLife += amount;
+            }
+
+            gamePlayView.SetCurrentLife(_currentLife);
         }
 
         public string LevelComplete()
@@ -73,9 +87,18 @@ namespace AncientTech.Game
             return "";
         }
 
-        public void DepleteLife(float f)
+        public void DepleteLife(float amount)
         {
-            //throw new NotImplementedException();
+            if (_currentLife - amount < 0.01f) {
+                _currentLife = 0;
+
+                StopAllCoroutines();
+                GameOver();
+            } else {
+                _currentLife -= amount;
+            }
+
+            gamePlayView.SetCurrentLife(_currentLife);
         }
         
         private void CountdownTime(float seconds)
@@ -87,7 +110,7 @@ namespace AncientTech.Game
                 GameOver();
             }
 
-            //_timeView.CurrentTime = _currentTime;
+            gamePlayView.SetCurrentTime(_currentTime);
         }
         
         private void GameOver()
