@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Cinemachine;
 using UnityEngine;
+#if UNITY_WEBGL
+using UnityEngine.Networking;
+#endif
 
 namespace AncientTech.Game
 {
@@ -23,11 +26,9 @@ namespace AncientTech.Game
 
         private IEnumerator Start()
         {
-            yield return new WaitForSeconds(0.5f); // O.o
-
             var currentLevel = GameManager.Instance.CurrentLevel;
             var path = Path.Combine(Application.streamingAssetsPath, $"Levels/{currentLevel:D2}.txt");
-
+            
             string input = null;
 
 #if UNITY_WEBGL
@@ -49,7 +50,6 @@ namespace AncientTech.Game
                 }
             } catch (FileNotFoundException e) {
                 Debug.LogError(e);
-                GameManager.Instance.GameOverByContent();
             }
 
             yield return new WaitForEndOfFrame();

@@ -8,7 +8,9 @@ namespace AncientTech.UI
     {
         [SerializeField] private Text lifeTextView;
         [SerializeField] private Text scoreTextView;
+        
         [SerializeField] private GameObject pauseView;
+        [SerializeField] private GameObject loadingView;
 
         public void SetPaused(bool isPaused)
         {
@@ -16,6 +18,14 @@ namespace AncientTech.UI
             scoreTextView.gameObject.SetActive(!isPaused);
             
             pauseView.SetActive(isPaused);
+        }
+        
+        public void SetLoading(bool isLoading)
+        {
+            lifeTextView.gameObject.SetActive(!isLoading);
+            scoreTextView.gameObject.SetActive(!isLoading);
+            
+            loadingView.SetActive(isLoading);
         }
 
         public void SetCurrentLife(float life)

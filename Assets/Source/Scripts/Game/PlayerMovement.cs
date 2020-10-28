@@ -114,7 +114,7 @@ namespace AncientTech.Game
             if (hit.collider.CompareTag(tagGoal)) {
                 if (GameManager.Instance.IsGameRunning) {
                     //_audioSource.PlayOneShot(_sounds[2]);
-                    //StartCoroutine(GameManager.Instance.LevelComplete());
+                    GameManager.Instance.LevelComplete();
                 }
 
                 return true;

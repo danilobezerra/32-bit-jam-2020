@@ -567,6 +567,7 @@ MonoBehaviour:
   lifeTextView: {fileID: 159739418}
   scoreTextView: {fileID: 596681821}
   pauseView: {fileID: 893536464}
+  loadingView: {fileID: 579614124}
 --- !u!1 &681879036
 GameObject:
   m_ObjectHideFlags: 0

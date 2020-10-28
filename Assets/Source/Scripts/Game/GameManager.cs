@@ -1,5 +1,10 @@
-﻿using AncientTech.UI;
+﻿using System.Collections;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using AncientTech.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace AncientTech.Game
 {
@@ -12,7 +17,7 @@ namespace AncientTech.Game
         public bool IsGameRunning { get; private set; }
         public int CurrentLevel
         {
-            get => PlayerPrefs.GetInt("Level", 1);
+            get => PlayerPrefs.GetInt("Level", 0);
             private set => PlayerPrefs.SetInt("Level", value);
         }
 
@@ -28,8 +33,24 @@ namespace AncientTech.Game
             }
         }
 
-        private void Start()
+        private IEnumerator Start()
         {
+            gamePlayView.SetLoading(true);
+
+            _currentLife = PlayerPrefs.GetFloat("Life", 1f);
+            _currentScore = PlayerPrefs.GetInt("Score", 0);
+            
+            yield return new WaitForSeconds(3f);
+            
+            gamePlayView.SetCurrentLife(_currentLife);
+            gamePlayView.SetCurrentScore(_currentScore);
+        
+            //PlayerPrefs.DeleteAll(); // On Play button press
+            
+            //var backgroundMusic = Camera.main.GetComponent<AudioSource>();
+            //backgroundMusic.Play();
+            
+            gamePlayView.SetLoading(false);
             IsGameRunning = true;
         }
         
@@ -48,12 +69,6 @@ namespace AncientTech.Game
                     gamePlayView.SetPaused(false);
                 }
             }
-        }
-
-        public void GameOverByContent()
-        {
-            IsGameRunning = false;
-            //SceneManager.LoadScene(_endingScene);
         }
 
         public void AddScore(int amount)
@@ -78,10 +93,30 @@ namespace AncientTech.Game
             gamePlayView.SetCurrentLife(_currentLife);
         }
 
-        public string LevelComplete()
+        public void LevelComplete()
         {
-            //throw new NotImplementedException();
-            return "";
+            IsGameRunning = false;
+            
+            PlayerPrefs.SetFloat("Life", _currentLife);
+            PlayerPrefs.SetInt("Score", _currentScore);
+            
+            var path = Path.Combine(Application.streamingAssetsPath, "Levels/");
+            var info = new DirectoryInfo(path);
+
+            var levels = info.GetFiles()
+                .Where(file => file.Extension == ".txt")
+                .Select(txt => Regex.Match(txt.Name, @"\d+").Value)
+                .Select(int.Parse)
+                .ToArray();
+            
+            if (CurrentLevel + 1 > levels[levels.Length - 1]) {
+                CurrentLevel = 0;
+            } else {
+                CurrentLevel++;
+            }
+            
+            var activeScene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(activeScene.name);
         }
 
         public void DepleteLife(float amount)
@@ -102,9 +137,8 @@ namespace AncientTech.Game
         {
             IsGameRunning = false;
 
-            //PlayerPrefs.SetFloat("Life", _currentLife);
-            //PlayerPrefs.SetFloat("Time", _currentTime);
-            //PlayerPrefs.SetInt("Score", _currentScore);
+            PlayerPrefs.SetFloat("Life", _currentLife);
+            PlayerPrefs.SetInt("Score", _currentScore);
 
             //SceneManager.LoadScene(_endingScene);
         }
