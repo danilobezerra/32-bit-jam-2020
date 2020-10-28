@@ -18,7 +18,6 @@ namespace AncientTech.Game
 
         private int _currentScore = 0;
         private float _currentLife = 1f;
-        private float _currentTime = 60;
 
         private void Awake()
         {
@@ -48,8 +47,6 @@ namespace AncientTech.Game
 
                     gamePlayView.SetPaused(false);
                 }
-            } else {
-                //CountdownTime(Time.deltaTime);
             }
         }
 
@@ -99,18 +96,6 @@ namespace AncientTech.Game
             }
 
             gamePlayView.SetCurrentLife(_currentLife);
-        }
-        
-        private void CountdownTime(float seconds)
-        {
-            _currentTime -= seconds;
-
-            if (_currentTime < 1) {
-                StopAllCoroutines();
-                GameOver();
-            }
-
-            gamePlayView.SetCurrentTime(_currentTime);
         }
         
         private void GameOver()

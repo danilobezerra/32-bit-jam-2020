@@ -17,9 +17,15 @@ namespace AncientTech.Game
         [SerializeField] private float moveSpeed = 2.5f;
         [SerializeField] private float gridSize = 1f;
 
+        [SerializeField] private Animator animatorController;
         private AudioSource _audioSource;
-
-        public bool IsMoving { get; private set; }
+        
+        private static readonly int IsMovingAnimatorProperty = Animator.StringToHash("Is Moving");
+        public bool IsMoving
+        {
+            get => animatorController.GetBool(IsMovingAnimatorProperty);
+            private set => animatorController.SetBool(IsMovingAnimatorProperty, value);
+        }
 
         private void Awake()
         {
@@ -41,8 +47,29 @@ namespace AncientTech.Game
             if (horizontal == 0 && vertical == 0) return;
             var input = new Vector3(horizontal, 0, vertical);
 
+            RotateCharacter(input);
+
             if (!CanMove(input)) return;
             StartCoroutine(Move(input));
+        }
+
+        private void RotateCharacter(Vector3 input)
+        {
+            if (input == Vector3.forward) {
+                animatorController.transform.eulerAngles = new Vector3(0,0,0);
+            }
+            
+            if (input == Vector3.left) {
+                animatorController.transform.eulerAngles = new Vector3(0,-90,0);
+            }
+            
+            if (input == Vector3.back) {
+                animatorController.transform.eulerAngles = new Vector3(0,180,0);
+            }
+            
+            if (input == Vector3.right) {
+                animatorController.transform.eulerAngles = new Vector3(0,90,0);
+            }
         }
 
         private IEnumerator Move(Vector3 input)
@@ -96,7 +123,8 @@ namespace AncientTech.Game
             if (hit.collider.CompareTag(tagCoin)) {
                 if (GameManager.Instance.IsGameRunning) {
                     //_audioSource.PlayOneShot(_sounds[3]);
-                    GameManager.Instance.AddScore(100); // TODO: object's properties 
+                    var coin = hit.collider.gameObject.GetComponent<Coin>();
+                    GameManager.Instance.AddScore(coin.Value); // TODO: object's properties 
                     // TODO: Play coin caught sound
 
                     Destroy(hit.collider.gameObject);
@@ -108,7 +136,8 @@ namespace AncientTech.Game
             if (hit.collider.CompareTag(tagHealth)) {
                 if (GameManager.Instance.IsGameRunning) {
                     //_audioSource.PlayOneShot(_sounds[4]);
-                    GameManager.Instance.ReplenishLife(0.1f); // TODO: object's properties 
+                    var health = hit.collider.gameObject.GetComponent<Health>();
+                    GameManager.Instance.ReplenishLife(health.Points);
                     // TODO: Play cure sound
 
                     Destroy(hit.collider.gameObject);
