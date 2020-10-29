@@ -56,19 +56,19 @@ namespace AncientTech.Game
         private void RotateCharacter(Vector3 input)
         {
             if (input == Vector3.forward) {
-                animatorController.transform.eulerAngles = new Vector3(0,0,0);
+                animatorController.transform.eulerAngles = new Vector3(0, 0, 0);
             }
             
             if (input == Vector3.left) {
-                animatorController.transform.eulerAngles = new Vector3(0,-90,0);
+                animatorController.transform.eulerAngles = new Vector3(0, -90, 0);
             }
             
             if (input == Vector3.back) {
-                animatorController.transform.eulerAngles = new Vector3(0,180,0);
+                animatorController.transform.eulerAngles = new Vector3(0, 180, 0);
             }
             
             if (input == Vector3.right) {
-                animatorController.transform.eulerAngles = new Vector3(0,90,0);
+                animatorController.transform.eulerAngles = new Vector3(0, 90, 0);
             }
         }
 

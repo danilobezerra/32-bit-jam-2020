@@ -151,6 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 973f6dbe77791e8489db2b079ce421df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  points: 0.1
 --- !u!1001 &4857099824544169919
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -205,6 +206,30 @@ PrefabInstance:
     - target: {fileID: 4000013342018400, guid: 54b675d5f2989b94e99fef50f523abc0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000013342018400, guid: 54b675d5f2989b94e99fef50f523abc0, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000013342018400, guid: 54b675d5f2989b94e99fef50f523abc0, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000013342018400, guid: 54b675d5f2989b94e99fef50f523abc0, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000014140730872, guid: 54b675d5f2989b94e99fef50f523abc0, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000014140730872, guid: 54b675d5f2989b94e99fef50f523abc0, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000014140730872, guid: 54b675d5f2989b94e99fef50f523abc0, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 198000011485904942, guid: 54b675d5f2989b94e99fef50f523abc0,
         type: 3}

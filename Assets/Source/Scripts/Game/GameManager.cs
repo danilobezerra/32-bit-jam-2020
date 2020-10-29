@@ -13,6 +13,7 @@ namespace AncientTech.Game
         public static GameManager Instance { get; private set; }
 
         [SerializeField] private GamePlayView gamePlayView;
+        [SerializeField] private GameOverView gameOverView;
 
         public bool IsGameRunning { get; private set; }
         public int CurrentLevel
@@ -35,17 +36,16 @@ namespace AncientTech.Game
 
         private IEnumerator Start()
         {
+            Time.timeScale = 1f;
             gamePlayView.SetLoading(true);
 
             _currentLife = PlayerPrefs.GetFloat("Life", 1f);
             _currentScore = PlayerPrefs.GetInt("Score", 0);
-            
+
             yield return new WaitForSeconds(3f);
             
             gamePlayView.SetCurrentLife(_currentLife);
             gamePlayView.SetCurrentScore(_currentScore);
-        
-            //PlayerPrefs.DeleteAll(); // On Play button press
             
             //var backgroundMusic = Camera.main.GetComponent<AudioSource>();
             //backgroundMusic.Play();
@@ -125,7 +125,7 @@ namespace AncientTech.Game
                 _currentLife = 0;
 
                 StopAllCoroutines();
-                GameOver();
+                StartCoroutine(GameOver());
             } else {
                 _currentLife -= amount;
             }
@@ -133,14 +133,17 @@ namespace AncientTech.Game
             gamePlayView.SetCurrentLife(_currentLife);
         }
         
-        private void GameOver()
+        private IEnumerator GameOver()
         {
             IsGameRunning = false;
+            gamePlayView.SetLoading(true);
+            
+            yield return new WaitForSeconds(1.5f);
 
-            PlayerPrefs.SetFloat("Life", _currentLife);
-            PlayerPrefs.SetInt("Score", _currentScore);
-
-            //SceneManager.LoadScene(_endingScene);
+            gamePlayView.SetLoading(false);
+            gameOverView.SetActive(true, _currentScore);
+            
+            Time.timeScale = 0;
         }
     }
 }
