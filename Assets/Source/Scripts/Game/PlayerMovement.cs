@@ -6,20 +6,25 @@ namespace AncientTech.Game
 {
     public class PlayerMovement : MonoBehaviour
     {
+        private const float MaxLightIntensity = 3;
+        
         [SerializeField] private string tagWall = "Wall";
         [SerializeField] private string tagGoal = "Goal";
         [SerializeField] private string tagCoin = "Coin";
         [SerializeField] private string tagHealth = "Health";
 
-        [SerializeField] private AudioClip[] _sounds;
+        [SerializeField] private AudioClip footstepsClip;
 
         [SerializeField] private float moveFactor = 1f;
         [SerializeField] private float moveSpeed = 2.5f;
         [SerializeField] private float gridSize = 1f;
 
         [SerializeField] private Animator animatorController;
-        private AudioSource _audioSource;
+        [SerializeField] private Light spotLight;
         
+        private AudioSource _audio;
+        private float _spotLightDefaultIntensity;
+
         private static readonly int IsMovingAnimatorProperty = Animator.StringToHash("Is Moving");
         public bool IsMoving
         {
@@ -29,7 +34,12 @@ namespace AncientTech.Game
 
         private void Awake()
         {
-            _audioSource = GetComponent<AudioSource>();
+            _audio = GetComponent<AudioSource>();
+        }
+
+        private void Start()
+        {
+            _spotLightDefaultIntensity = spotLight.intensity;
         }
 
         private void FixedUpdate()
@@ -75,10 +85,19 @@ namespace AncientTech.Game
         private IEnumerator Move(Vector3 input)
         {
             IsMoving = true;
-            //_audioSource.PlayOneShot(_sounds[0]);
+            _audio.PlayOneShot(footstepsClip);
 
             if (GameManager.Instance.IsGameRunning) {
                 GameManager.Instance.DepleteLife(0.05f);
+                _audio.volume -= 0.05f;
+                
+                var lightIntensity = MaxLightIntensity * 0.05f;
+                
+                if (spotLight.intensity - lightIntensity < lightIntensity * 0.01f) {
+                    spotLight.intensity = 0;
+                } else {
+                    spotLight.intensity -= lightIntensity;
+                }
             }
 
             var startPosition = transform.position;
@@ -92,7 +111,7 @@ namespace AncientTech.Game
                 transform.position = Vector3.Lerp(startPosition, endPosition, time);
                 yield return null;
             }
-
+            
             IsMoving = false;
             yield return 0;
         }
@@ -106,14 +125,11 @@ namespace AncientTech.Game
             Debug.DrawRay(transform.position, direction, Color.magenta, .5f);
 
             if (hit.collider.CompareTag(tagWall)) {
-                // TODO: Play wall bump sound
-                //GetComponent<AudioSource>().PlayOneShot(_sounds[1]);
                 return false;
             }
 
             if (hit.collider.CompareTag(tagGoal)) {
                 if (GameManager.Instance.IsGameRunning) {
-                    //_audioSource.PlayOneShot(_sounds[2]);
                     GameManager.Instance.LevelComplete();
                 }
 
@@ -122,11 +138,10 @@ namespace AncientTech.Game
 
             if (hit.collider.CompareTag(tagCoin)) {
                 if (GameManager.Instance.IsGameRunning) {
-                    //_audioSource.PlayOneShot(_sounds[3]);
                     var coin = hit.collider.gameObject.GetComponent<Coin>();
-                    GameManager.Instance.AddScore(coin.Value); // TODO: object's properties 
-                    // TODO: Play coin caught sound
-
+                    _audio.PlayOneShot(coin.PickupClip);
+                    
+                    GameManager.Instance.AddScore(coin.Value);
                     Destroy(hit.collider.gameObject);
                 }
 
@@ -135,11 +150,20 @@ namespace AncientTech.Game
 
             if (hit.collider.CompareTag(tagHealth)) {
                 if (GameManager.Instance.IsGameRunning) {
-                    //_audioSource.PlayOneShot(_sounds[4]);
                     var health = hit.collider.gameObject.GetComponent<Health>();
+                    _audio.PlayOneShot(health.PickupClip);
+                    
                     GameManager.Instance.ReplenishLife(health.Points);
-                    // TODO: Play cure sound
+                    _audio.volume += health.Points;
 
+                    var lightIntensity = MaxLightIntensity * health.Points;
+                    
+                    if (spotLight.intensity + lightIntensity > MaxLightIntensity) {
+                        spotLight.intensity = MaxLightIntensity;
+                    } else {
+                        spotLight.intensity += lightIntensity;
+                    }
+                    
                     Destroy(hit.collider.gameObject);
                 }
 

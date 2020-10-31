@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AncientTech.Game;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -34,6 +35,8 @@ namespace AncientTech.UI
 #else
             quitButton.SetActive(false);
 #endif
+            
+            AudioManager.Instance.PlayLevelMusic();
         }
 
         private void StartGame()
@@ -47,6 +50,7 @@ namespace AncientTech.UI
             PlayerPrefs.Save();
             
             SceneManager.LoadScene(gameSceneName);
+            AudioManager.Instance.FadeDown(1.5f);
         }
         
         private void ContinueGame()
@@ -60,6 +64,7 @@ namespace AncientTech.UI
             }
             
             SceneManager.LoadScene(gameSceneName);
+            AudioManager.Instance.FadeDown(1.5f);
         }
         
         private static void Quit()

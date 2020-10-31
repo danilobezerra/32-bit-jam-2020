@@ -58,6 +58,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acdd45f144cbdc844baf62c42a4dce69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  value: 100
+  pickupClip: {fileID: 8300000, guid: df0f6090cbb6c694a8ba436f7d49b6ec, type: 3}
 --- !u!1 &6404507702879186880
 GameObject:
   m_ObjectHideFlags: 0

@@ -47,10 +47,9 @@ namespace AncientTech.Game
             gamePlayView.SetCurrentLife(_currentLife);
             gamePlayView.SetCurrentScore(_currentScore);
             
-            //var backgroundMusic = Camera.main.GetComponent<AudioSource>();
-            //backgroundMusic.Play();
-            
             gamePlayView.SetLoading(false);
+            AudioManager.Instance.PlayLevelMusic();
+            
             IsGameRunning = true;
         }
         
@@ -137,11 +136,13 @@ namespace AncientTech.Game
         {
             IsGameRunning = false;
             gamePlayView.SetLoading(true);
+            AudioManager.Instance.FadeDown(1.5f);
             
             yield return new WaitForSeconds(1.5f);
 
             gamePlayView.SetLoading(false);
             gameOverView.SetActive(true, _currentScore);
+            AudioManager.Instance.PlaySelectedMusic(null);
             
             Time.timeScale = 0;
         }
