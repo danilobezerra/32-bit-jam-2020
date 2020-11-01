@@ -23,10 +23,12 @@ namespace AncientTech.Game
         [SerializeField] private Transform[] maps;
 
         [SerializeField] private CinemachineVirtualCamera virtualCamera;
+        
+        public int currentLevel = 0;
 
         private IEnumerator Start()
         {
-            var currentLevel = GameManager.Instance.CurrentLevel;
+            currentLevel = GameManager.Instance.CurrentLevel;
             var path = Path.Combine(Application.streamingAssetsPath, $"Levels/{currentLevel:D2}.txt");
             
             string input = null;
@@ -38,7 +40,6 @@ namespace AncientTech.Game
 
             if (www.isNetworkError || www.isHttpError) {
                 Debug.LogError(www.error);
-                GameManager.Instance.GameOverByContent();
             } else {
                 input = www.downloadHandler.text;
             }
